@@ -12,6 +12,7 @@ from app.routers import orders
 from app.models.cart import Cart, CartItem
 from app.routers import cart
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 app = FastAPI(
     title="E-commerce Backend API",
@@ -19,16 +20,17 @@ app = FastAPI(
     version="1.0.0",
 )
 
+origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+if os.getenv("FRONTEND_URL"):
+      origins.append(os.getenv("FRONTEND_URL").rstrip("/"))
+
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+      CORSMiddleware,
+      allow_origins=origins,
+      allow_credentials=True,
+      allow_methods=["*"],
+      allow_headers=["*"],
+  )
 
 Base.metadata.create_all(bind=engine)
 
